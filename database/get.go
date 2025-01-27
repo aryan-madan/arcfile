@@ -28,7 +28,7 @@ func GetFile(identifier string) (structures.File, error) {
 	if err := rows.Scan(
 		&File.ID,
 		&File.Identifier,
-		&File.Name,
+		&File.Filename,
 		&File.Path,
 		&File.CreatedAt,
 		&File.ExpiresAt,
