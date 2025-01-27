@@ -75,6 +75,7 @@ func UploadHandler(c *gin.Context) {
 	}
 
 	c.JSON(http.StatusOK, gin.H{
+		"file_id":    retFile.ID,
 		"identifier": retFile.Identifier,
 		"created_at": retFile.CreatedAt.String(),
 		"expires_at": retFile.ExpiresAt.String(),

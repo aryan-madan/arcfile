@@ -51,23 +51,22 @@ func CreateFile(
 			break // unique
 		}
 	}
-
-	query := "INSERT INTO files (identifier, filename, uuid, created_at, expires_at, email) VALUES (?, ?, ?, ?, ?, ?)"
-
-	result, err := db.Exec(query, identifier, name, uuid, createdAt, expiresAt, email)
-	if err != nil {
-		log.Fatalln("error inserting file:", err)
-		return structures.File{}, err
-	}
-
-	lastInsertID, err := result.LastInsertId()
-	if err != nil {
-		log.Fatalln("error getting last insert ID:", err)
-		return structures.File{}, err
-	}
+	query := `INSERT INTO files 
+	(identifier, filename, uuid, created_at, expires_at, email) 
+	VALUES (?, ?, ?, ?, ?, ?) 
+	RETURNING id, identifier, filename, uuid, created_at, expires_at, email;`
 
 	var file structures.File
-	err = db.QueryRow("SELECT id, identifier, filename, uuid, created_at, expires_at, email FROM files WHERE id = ?", lastInsertID).Scan(
+
+	err = db.QueryRow(
+		query,
+		identifier,
+		name,
+		uuid,
+		createdAt,
+		expiresAt,
+		email,
+	).Scan(
 		&file.ID,
 		&file.Identifier,
 		&file.Filename,
@@ -76,10 +75,12 @@ func CreateFile(
 		&file.ExpiresAt,
 		&file.Email,
 	)
+
 	if err != nil {
-		log.Fatalln("error fetching inserted file:", err)
+		log.Println("error creating file record:", err)
 		return structures.File{}, err
 	}
 
 	return file, nil
+
 }
