@@ -2,9 +2,7 @@ package main
 
 import (
 	"database/sql"
-	"time"
 
-	"github.com/nxrmqlly/arcfile-backend/database"
 	_ "modernc.org/sqlite"
 )
 
@@ -27,15 +25,7 @@ CREATE TABLE IF NOT EXISTS files (
 );
 
 `
-	database.CreateFile(
-		"aaa",
-		"aacc.exe",
-		"./ee",
-		time.Now(),
-		time.Now(),
-		"a@a.co",
-	)
-_, err = db.Exec(createTable)
+	_, err = db.Exec(createTable)
 	db.Close()
 
 	if err != nil {
