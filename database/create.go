@@ -23,7 +23,7 @@ func CreateFile(
 	defer db.Close()
 	query := "INSERT INTO files (identifier, name, path, created_at, expires_at, email) VALUES (?, ?, ?, ?, ?, ?)"
 
-	rows, err := db.Query(query, identifier)
+	rows, err := db.Query(query, identifier, name, path, createdAt, expiresAt, email)
 
 	if err != nil {
 		return structures.File{}, err

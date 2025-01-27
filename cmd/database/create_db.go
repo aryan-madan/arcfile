@@ -34,7 +34,6 @@ CREATE TABLE IF NOT EXISTS files (
 		time.Now(),
 		time.Now(),
 		"a@a.co",
-
 	)
 _, err = db.Exec(createTable)
 	db.Close()
