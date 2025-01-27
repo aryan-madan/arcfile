@@ -11,27 +11,34 @@ import (
 )
 
 func UploadHandler(c *gin.Context) {
-	
+
 	// Source
 	file, err := c.FormFile("file")
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
-			"code": http.StatusBadRequest,
+			"code":    http.StatusBadRequest,
 			"message": "get form error: " + err.Error(),
 		})
 		return
 	}
-	
+
 	cwd, err := os.Getwd()
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
-			"code": http.StatusBadRequest,
+			"code":    http.StatusInternalServerError,
 			"message": "internal error: " + err.Error(),
 		})
 		return
 	}
-	
+
 	email := c.PostForm("email")
+	if email == "" {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"code":    http.StatusUnprocessableEntity,
+			"message": "email is required",
+		})
+		return
+	}
 	relPath := filepath.Join("data", "uploads", file.Filename)
 	pathToSave := filepath.Join(cwd, relPath)
 	currentTime := time.Now()
@@ -40,8 +47,8 @@ func UploadHandler(c *gin.Context) {
 	database.CreateFile("090000", file.Filename, relPath, currentTime, expiresAt, email)
 
 	if err := c.SaveUploadedFile(file, pathToSave); err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{
-			"code": http.StatusBadRequest,
+		c.JSON(http.StatusInternalServerError, gin.H{
+			"code":    http.StatusInternalServerError,
 			"message": "error uploading file: " + err.Error(),
 		})
 		return
