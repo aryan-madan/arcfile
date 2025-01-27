@@ -17,8 +17,8 @@ func main() {
 CREATE TABLE IF NOT EXISTS files (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     identifier TEXT NOT NULL,
-    name TEXT NOT NULL,
-    path TEXT NOT NULL,
+    filename TEXT NOT NULL,
+    uuid TEXT NOT NULL,
     created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
     expires_at DATETIME NOT NULL,
     email TEXT NOT NULL

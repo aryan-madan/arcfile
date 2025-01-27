@@ -6,13 +6,13 @@ import (
 	"path/filepath"
 	"time"
 
+	"github.com/google/uuid"
+
 	"github.com/gin-gonic/gin"
 	"github.com/nxrmqlly/arcfile-backend/database"
 )
 
 func UploadHandler(c *gin.Context) {
-
-	// Source
 	file, err := c.FormFile("file")
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
@@ -24,7 +24,7 @@ func UploadHandler(c *gin.Context) {
 
 	cwd, err := os.Getwd()
 	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{
+		c.JSON(http.StatusInternalServerError, gin.H{
 			"code":    http.StatusInternalServerError,
 			"message": "internal error: " + err.Error(),
 		})
@@ -39,12 +39,32 @@ func UploadHandler(c *gin.Context) {
 		})
 		return
 	}
-	relPath := filepath.Join("data", "uploads", file.Filename)
-	pathToSave := filepath.Join(cwd, relPath)
+
+	filename := filepath.Base(file.Filename)
+	fileUUID := uuid.NewString()
+	pathToSave := filepath.Join(cwd, "data", "uploads", fileUUID)
+
+	uploadDir := filepath.Join(cwd, "data", "uploads")
+	if err := os.MkdirAll(uploadDir, os.ModePerm); err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{
+			"code":    http.StatusInternalServerError,
+			"message": "error creating upload directory: " + err.Error(),
+		})
+		return
+	}
+
 	currentTime := time.Now()
 	expiresAt := currentTime.Add(15 * time.Minute)
 
-	database.CreateFile("090000", file.Filename, relPath, currentTime, expiresAt, email)
+	retFile, err := database.CreateFile(filename, fileUUID, currentTime, expiresAt, email)
+
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{
+			"code":    http.StatusInternalServerError,
+			"message": "error saving file metadata: " + err.Error(),
+		})
+		return
+	}
 
 	if err := c.SaveUploadedFile(file, pathToSave); err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{
@@ -55,10 +75,10 @@ func UploadHandler(c *gin.Context) {
 	}
 
 	c.JSON(http.StatusOK, gin.H{
-		"identifier": "090000",
-		"created_at": currentTime.String(),
-		"expires_at": expiresAt.String(),
-		"filename":   file.Filename,
-		"email":      email,
+		"identifier": retFile.Identifier,
+		"created_at": retFile.CreatedAt.String(),
+		"expires_at": retFile.ExpiresAt.String(),
+		"filename":   retFile.Filename,
+		"email":      retFile.Email,
 	})
 }

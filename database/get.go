@@ -29,7 +29,7 @@ func GetFile(identifier string) (structures.File, error) {
 		&File.ID,
 		&File.Identifier,
 		&File.Filename,
-		&File.Path,
+		&File.UUID,
 		&File.CreatedAt,
 		&File.ExpiresAt,
 		&File.Email,
