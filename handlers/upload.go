@@ -10,10 +10,11 @@ import (
 
 	"github.com/gin-gonic/gin"
 	"github.com/nxrmqlly/arcfile-backend/database"
+	"github.com/nxrmqlly/arcfile-backend/structures"
 )
 
 func UploadHandler(c *gin.Context) {
-	file, err := c.FormFile("file")
+	formFile, err := c.FormFile("file")
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"code":    http.StatusBadRequest,
@@ -40,7 +41,7 @@ func UploadHandler(c *gin.Context) {
 		return
 	}
 
-	filename := filepath.Base(file.Filename)
+	filename := filepath.Base(formFile.Filename)
 	fileUUID := uuid.NewString()
 	pathToSave := filepath.Join(cwd, "data", "uploads", fileUUID)
 
@@ -56,9 +57,17 @@ func UploadHandler(c *gin.Context) {
 	currentTime := time.Now()
 	expiresAt := currentTime.Add(15 * time.Minute)
 
-	retFile, err := database.CreateFile(filename, fileUUID, currentTime, expiresAt, email)
+	file := structures.File{
+		Identifier: "",
+		Filename:   filename,
+		UUID:       fileUUID,
+		CreatedAt:  currentTime,
+		ExpiresAt:  expiresAt,
+		Email:      email,
+	}
 
-	if err != nil {
+	
+	if err := database.CreateFile(&file); err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{
 			"code":    http.StatusInternalServerError,
 			"message": "error saving file metadata: " + err.Error(),
@@ -66,7 +75,7 @@ func UploadHandler(c *gin.Context) {
 		return
 	}
 
-	if err := c.SaveUploadedFile(file, pathToSave); err != nil {
+	if err := c.SaveUploadedFile(formFile, pathToSave); err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{
 			"code":    http.StatusInternalServerError,
 			"message": "error uploading file: " + err.Error(),
@@ -75,11 +84,15 @@ func UploadHandler(c *gin.Context) {
 	}
 
 	c.JSON(http.StatusOK, gin.H{
-		"file_id":    retFile.ID,
-		"identifier": retFile.Identifier,
-		"created_at": retFile.CreatedAt.String(),
-		"expires_at": retFile.ExpiresAt.String(),
-		"filename":   retFile.Filename,
-		"email":      retFile.Email,
+		"code":    http.StatusOK,
+		"message": "file uploaded successfully",
+		"data": gin.H{
+			"identifier": file.Identifier,
+			"filename":   file.Filename,
+			"uuid":       file.UUID,
+			"created_at": file.CreatedAt,
+			"expires_at": file.ExpiresAt,
+			"email":      file.Email,
+		},
 	})
 }

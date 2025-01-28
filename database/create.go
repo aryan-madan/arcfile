@@ -24,50 +24,44 @@ func generateIdentifier(length int) string {
 
 // creates a new file entry in database
 func CreateFile(
-	name string,
-	uuid string,
-	createdAt time.Time,
-	expiresAt time.Time,
-	email string,
-) (structures.File, error) {
+	file *structures.File,
+) error {
 	db, err := sql.Open("sqlite", "./data/arcfile.db")
+
 	if err != nil {
 		panic(err)
 	}
 	defer db.Close()
 
-	var identifier string
+	var identifier string = generateIdentifier(6)
 
-	for {
-		identifier = generateIdentifier(6)
+	log.Println("generated identifier:", identifier)
 
-		var count int
-		err = db.QueryRow("SELECT COUNT(*) FROM files WHERE identifier = ?", identifier).Scan(&count)
-		if err != nil {
-			log.Fatalln("error getting identifier count:", err)
-			return structures.File{}, err
-		}
-		if count == 0 {
-			break // unique
-		}
-	}
-	query := `INSERT INTO files 
-	(identifier, filename, uuid, created_at, expires_at, email) 
-	VALUES (?, ?, ?, ?, ?, ?) 
-	RETURNING id, identifier, filename, uuid, created_at, expires_at, email;`
+	query := `
+		INSERT INTO files 
+		(identifier, filename, uuid, created_at, expires_at, email) 
+		VALUES (?, ?, ?, ?, ?, ?) 
+		RETURNING identifier, filename, uuid, created_at, expires_at, email;`
 
-	var file structures.File
-
-	err = db.QueryRow(
+	row := db.QueryRow(
 		query,
 		identifier,
-		name,
-		uuid,
-		createdAt,
-		expiresAt,
-		email,
-	).Scan(
-		&file.ID,
+		file.Filename,
+		file.UUID,
+		file.CreatedAt,
+		file.ExpiresAt,
+		file.Email,
+	)
+
+	// log.Println("running query: \n", query, "\n with the following values: \n",
+	// 	identifier,
+	// 	file.Filename,
+	// 	file.UUID,
+	// 	file.CreatedAt,
+	// 	file.ExpiresAt,
+	// 	file.Email)
+
+	err = row.Scan(
 		&file.Identifier,
 		&file.Filename,
 		&file.UUID,
@@ -75,12 +69,13 @@ func CreateFile(
 		&file.ExpiresAt,
 		&file.Email,
 	)
-
 	if err != nil {
-		log.Println("error creating file record:", err)
-		return structures.File{}, err
+		log.Println(err.Error())
+		return err
 	}
 
-	return file, nil
+	// file.Identifier = identifier
+
+	return nil
 
 }
