@@ -1,7 +1,6 @@
 package database
 
 import (
-	"database/sql"
 	"log"
 	"math/rand"
 	"time"
@@ -26,24 +25,18 @@ func generateIdentifier(length int) string {
 func CreateFile(
 	file *structures.File,
 ) error {
-	db, err := sql.Open("sqlite", "./data/arcfile.db")
-
-	if err != nil {
-		panic(err)
-	}
-	defer db.Close()
 
 	var identifier string = generateIdentifier(6)
 
 	log.Println("generated identifier:", identifier)
 
 	query := `
-		INSERT INTO files 
-		(identifier, filename, uuid, created_at, expires_at, email) 
-		VALUES (?, ?, ?, ?, ?, ?) 
-		RETURNING identifier, filename, uuid, created_at, expires_at, email;`
+        INSERT INTO files 
+        (identifier, filename, uuid, created_at, expires_at, email) 
+        VALUES (?, ?, ?, ?, ?, ?) 
+        RETURNING identifier;`
 
-	row := db.QueryRow(
+	err := DB.QueryRow(
 		query,
 		identifier,
 		file.Filename,
@@ -51,30 +44,12 @@ func CreateFile(
 		file.CreatedAt,
 		file.ExpiresAt,
 		file.Email,
-	)
-
-	// log.Println("running query: \n", query, "\n with the following values: \n",
-	// 	identifier,
-	// 	file.Filename,
-	// 	file.UUID,
-	// 	file.CreatedAt,
-	// 	file.ExpiresAt,
-	// 	file.Email)
-
-	err = row.Scan(
+	).Scan(
 		&file.Identifier,
-		&file.Filename,
-		&file.UUID,
-		&file.CreatedAt,
-		&file.ExpiresAt,
-		&file.Email,
 	)
 	if err != nil {
-		log.Println(err.Error())
 		return err
 	}
-
-	// file.Identifier = identifier
 
 	return nil
 
