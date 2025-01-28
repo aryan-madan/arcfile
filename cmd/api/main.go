@@ -19,7 +19,7 @@ func main() {
 
 
 	defer func() {
-		if err := storage.DB.Close(); err != nil {
+		if err := db.Close(); err != nil {
 			log.Fatalf("Error closing the database: %v", err)
 		}
 	}()
@@ -33,7 +33,7 @@ func main() {
 		log.Println("Shutting down server...")
 
 		// Close the database connection
-		if err := storage.DB.Close(); err != nil {
+		if err := db.Close(); err != nil {
 			log.Printf("Error closing the database during shutdown: %v", err)
 		}
 
@@ -49,6 +49,8 @@ func main() {
 	router.MaxMultipartMemory = 10 << 20 // 10 MiB
 
 	router.POST("/api/upload", handler.Upload)
+	router.POST("/api/file/:identifier", handler.FileInfo)
+	router.POST("/api/file/:identifier/download", handler.FileDownload)
 
 
 

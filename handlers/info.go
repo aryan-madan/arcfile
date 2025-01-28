@@ -12,7 +12,7 @@ import (
 func (h *Handlers) FileInfo(c *gin.Context) {
 	identifier := c.Param("identifier")
 
-	file, err := h.repo.GetFile(c.Request.Context(), identifier)
+	file, err := h.repo.GetFile(c, identifier)
 
 	var ae *storage.FileNotFoundError
 	if errors.As(err, &ae) {

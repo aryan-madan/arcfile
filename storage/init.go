@@ -6,7 +6,7 @@ import (
 	"os"
 )
 
-var DB *sql.DB
+
 
 func InitDatabase() (*sql.DB, error) {
 	// ensure dir exisits
@@ -18,7 +18,6 @@ func InitDatabase() (*sql.DB, error) {
 	if err != nil {
 		return nil, fmt.Errorf("open db: %w", err)
 	}
-	defer db.Close()
 
 	createTable := `
     CREATE TABLE IF NOT EXISTS files (

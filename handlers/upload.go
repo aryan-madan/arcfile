@@ -66,7 +66,7 @@ func (h *Handlers) Upload(c *gin.Context) {
 		Email:      email,
 	}
 
-	if err := h.repo.CreateFile(c.Request.Context(), &file); err != nil {
+	if err := h.repo.CreateFile(c, &file); err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{
 			"code":    http.StatusInternalServerError,
 			"message": "error saving file metadata: " + err.Error(),
