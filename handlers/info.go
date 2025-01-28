@@ -15,18 +15,21 @@ func (h *Handlers) FileInfo(c *gin.Context) {
 	file, err := h.repo.GetFile(c, identifier)
 
 	var ae *storage.FileNotFoundError
-	if errors.As(err, &ae) {
-		c.JSON(http.StatusNotFound, gin.H{
-			"code":    http.StatusNotFound,
-			"message": err.Error(),
-		})
-		return
-	} else {
-		// some other internal error
-		c.JSON(http.StatusInternalServerError, gin.H{
-			"code":    http.StatusInternalServerError,
-			"message": err.Error(),
-		})
+	if err != nil {
+		if errors.As(err, &ae) {
+			c.JSON(http.StatusNotFound, gin.H{
+				"code":    http.StatusNotFound,
+				"message": err.Error(),
+			})
+			return
+		} else {
+			// some other internal error
+			c.JSON(http.StatusInternalServerError, gin.H{
+				"code":    http.StatusInternalServerError,
+				"message": err.Error(),
+			})
+			return
+		}
 	}
 
 	c.JSON(http.StatusOK, gin.H{
