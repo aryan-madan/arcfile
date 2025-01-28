@@ -49,8 +49,8 @@ func main() {
 	router.MaxMultipartMemory = 10 << 20 // 10 MiB
 
 	router.POST("/api/upload", handler.Upload)
-	router.POST("/api/file/:identifier", handler.FileInfo)
-	router.POST("/api/file/:identifier/download", handler.FileDownload)
+	router.GET("/api/file/:identifier", handler.FileInfo)
+	router.GET("/api/file/:identifier/download", handler.FileDownload)
 
 
 
