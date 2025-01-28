@@ -1,10 +1,10 @@
 package main
 
 import (
-	"github.com/nxrmqlly/arcfile-backend/database"
+	"github.com/nxrmqlly/arcfile-backend/storage"
 	_ "modernc.org/sqlite"
 )
 
 func main() {
-	database.InitDatabase()
+	storage.InitDatabase()
 }

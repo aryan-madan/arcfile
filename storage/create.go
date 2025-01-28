@@ -1,6 +1,7 @@
-package database
+package storage
 
 import (
+	"context"
 	"log"
 	"math/rand"
 	"time"
@@ -22,7 +23,8 @@ func generateIdentifier(length int) string {
 }
 
 // creates a new file entry in database
-func CreateFile(
+func (r *Repository) CreateFile(
+	ctx context.Context,
 	file *structures.File,
 ) error {
 
@@ -36,7 +38,8 @@ func CreateFile(
         VALUES (?, ?, ?, ?, ?, ?) 
         RETURNING identifier;`
 
-	err := DB.QueryRow(
+	err := r.db.QueryRowContext(
+		ctx,
 		query,
 		identifier,
 		file.Filename,

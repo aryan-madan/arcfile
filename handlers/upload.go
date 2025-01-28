@@ -9,11 +9,11 @@ import (
 	"github.com/google/uuid"
 
 	"github.com/gin-gonic/gin"
-	"github.com/nxrmqlly/arcfile-backend/database"
 	"github.com/nxrmqlly/arcfile-backend/structures"
 )
 
-func UploadHandler(c *gin.Context) {
+// POST /api/upload
+func (h *Handlers) Upload(c *gin.Context) {
 	formFile, err := c.FormFile("file")
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
@@ -66,8 +66,7 @@ func UploadHandler(c *gin.Context) {
 		Email:      email,
 	}
 
-	
-	if err := database.CreateFile(&file); err != nil {
+	if err := h.repo.CreateFile(c.Request.Context(), &file); err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{
 			"code":    http.StatusInternalServerError,
 			"message": "error saving file metadata: " + err.Error(),
