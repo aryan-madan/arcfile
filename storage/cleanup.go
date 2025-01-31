@@ -66,13 +66,12 @@ func (r *Repository) CleanupExpiredEntries() {
 	var deletedCount int
 	for _, file := range files {
 		filePath := filepath.Join(storagePath, file.UUID)
-		if err := os.Remove(filePath); err != nil && !os.IsNotExist(err) {
-			log.Printf("File deletion failed (%s): %v", file.UUID, err)
-			continue
-		}
-
 		if err := r.deleteDatabaseEntry(file.Identifier); err != nil {
 			log.Printf("Database cleanup failed (%s): %v", file.Identifier, err)
+			continue
+		}
+		if err := os.Remove(filePath); err != nil && !os.IsNotExist(err) {
+			log.Printf("File deletion failed (%s): %v", file.UUID, err)
 			continue
 		}
 
