@@ -38,7 +38,7 @@ func (r *Repository) CreateFile(
         VALUES (?, ?, ?, ?, ?, ?) 
         RETURNING identifier;`
 
-	err := r.db.QueryRowContext(
+	rows := r.db.QueryRowContext(
 		ctx,
 		query,
 		identifier,
@@ -47,7 +47,8 @@ func (r *Repository) CreateFile(
 		file.CreatedAt,
 		file.ExpiresAt,
 		file.Email,
-	).Scan(
+	)
+	err := rows.Scan(
 		&file.Identifier,
 	)
 	if err != nil {
