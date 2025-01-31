@@ -10,7 +10,7 @@ import (
 	"github.com/nxrmqlly/arcfile-backend/structures"
 )
 
-// starts a background cleaner for files
+// starts a background cleaner for files //
 func (r *Repository) StartCleanupRoutine(interval time.Duration) {
 	go func() {
 
