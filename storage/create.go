@@ -38,7 +38,7 @@ func (r *Repository) CreateFile(
         VALUES (?, ?, ?, ?, ?, ?) 
         RETURNING identifier;`
 
-	rows := r.db.QueryRowContext(
+	rows := r.rw.QueryRowContext(
 		ctx,
 		query,
 		identifier,
