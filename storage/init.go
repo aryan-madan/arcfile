@@ -4,20 +4,26 @@ import (
 	"database/sql"
 	"fmt"
 	"os"
+
+	_ "github.com/mattn/go-sqlite3"
 )
 
-
-
-func InitDatabase() (*sql.DB, error) {
+func InitDatabase() (ro, rw *sql.DB, err error) {
 	// ensure dir exisits
 	if err := os.MkdirAll("./data", os.ModePerm); err != nil {
-		return nil, fmt.Errorf("create data dir: %w", err)
+		return nil, nil, fmt.Errorf("create data dir: %w", err)
 	}
 
-	db, err := sql.Open("sqlite", "./data/arcfile.db")
+	ro, err = sql.Open("sqlite3", "file:./data/arcfile.db?mode=ro&_journal_mode=wal")
 	if err != nil {
-		return nil, fmt.Errorf("open db: %w", err)
+		return nil, nil, fmt.Errorf("open db: %w", err)
 	}
+
+	rw, err = sql.Open("sqlite3", "file:./data/arcfile.db?mode=rw&_journal_mode=wal&_txlock=immediate")
+	if err != nil {
+		return nil, nil, fmt.Errorf("open db: %w", err)
+	}
+	rw.SetMaxOpenConns(1)
 
 	createTable := `
     CREATE TABLE IF NOT EXISTS files (
@@ -29,10 +35,10 @@ func InitDatabase() (*sql.DB, error) {
         email TEXT NOT NULL
     );`
 
-	_, err = db.Exec(createTable)
+	_, err = rw.Exec(createTable)
 	if err != nil {
-		return nil, fmt.Errorf("create table: %w", err)
+		return nil, nil, fmt.Errorf("create table: %w", err)
 	}
 
-	return db, nil
+	return ro, rw, nil
 }

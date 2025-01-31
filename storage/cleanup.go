@@ -27,7 +27,7 @@ func (r *Repository) StartCleanupRoutine(interval time.Duration) {
 }
 
 func (r *Repository) ExpiredFiles() ([]structures.File, error) {
-	rows, err := r.db.Query(`
+	rows, err := r.ro.Query(`
         SELECT identifier, uuid 
         FROM files 
         WHERE expires_at <= ?
@@ -84,7 +84,7 @@ func (r *Repository) CleanupExpiredEntries() {
 }
 
 func (r *Repository) deleteDatabaseEntry(identifier string) error {
-	_, err := r.db.Exec(`
+	_, err := r.rw.Exec(`
         DELETE FROM files 
         WHERE identifier = ?`,
 		identifier)

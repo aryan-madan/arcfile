@@ -13,13 +13,16 @@ import (
 )
 
 func main() {
-	db, err := storage.InitDatabase()
+	roDB, rwDB, err := storage.InitDatabase()
 	if err != nil {
 		log.Fatalf("Error initializing database: %v", err)
 	}
 
 	defer func() {
-		if err := db.Close(); err != nil {
+		if err := roDB.Close(); err != nil {
+			log.Fatalf("Error closing the database: %v", err)
+		}
+		if err := rwDB.Close(); err != nil {
 			log.Fatalf("Error closing the database: %v", err)
 		}
 	}()
@@ -33,17 +36,20 @@ func main() {
 		log.Println("Shutting down server...")
 
 		// Close the database connection
-		if err := db.Close(); err != nil {
+		if err := roDB.Close(); err != nil {
+			log.Printf("Error closing the database during shutdown: %v", err)
+		}
+		if err := rwDB.Close(); err != nil {
 			log.Printf("Error closing the database during shutdown: %v", err)
 		}
 
 		os.Exit(0) // Ensure the app exits after cleanup
 	}()
 
-	repo := storage.NewRepository(db)
+	repo := storage.NewRepository(roDB, rwDB)
 	handler := handlers.New(repo)
 
-	repo.StartCleanupRoutine(1 * time.Minute)
+	repo.StartCleanupRoutine(20 * time.Millisecond)
 	// Set a lower memory limit for multipart forms (default is 32 MiB)
 	router := gin.Default()
 	router.MaxMultipartMemory = 10 << 20 // 10 MiB
