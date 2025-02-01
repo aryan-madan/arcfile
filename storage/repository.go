@@ -3,9 +3,9 @@ package storage
 import "database/sql"
 
 type Repository struct {
-	ro, rw *sql.DB
+	rdb, wdb *sql.DB
 }
 
-func NewRepository(ro, rw *sql.DB) *Repository {
-	return &Repository{ro: ro, rw: rw}
+func NewRepository(rdb *sql.DB, wdb *sql.DB) *Repository {
+	return &Repository{rdb: rdb, wdb: wdb}
 }

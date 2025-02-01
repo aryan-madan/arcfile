@@ -55,7 +55,7 @@ func (h *Handlers) Upload(c *gin.Context) {
 	}
 
 	currentTime := time.Now().UTC()
-	expiresAt := currentTime.Add(1 * time.Minute)
+	expiresAt := currentTime.Add(10 * time.Minute)
 
 	file := structures.File{
 		Identifier: "",

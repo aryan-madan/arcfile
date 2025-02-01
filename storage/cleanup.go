@@ -27,12 +27,13 @@ func (r *Repository) StartCleanupRoutine(interval time.Duration) {
 }
 
 func (r *Repository) ExpiredFiles() ([]structures.File, error) {
-	rows, err := r.ro.Query(`
+	timeNow := time.Now().UTC()
+	rows, err := r.rdb.Query(`
         SELECT identifier, uuid 
         FROM files 
         WHERE expires_at <= ?
         `,
-		time.Now().Format(time.RFC3339))
+		timeNow)
 	if err != nil {
 		return nil, err
 	}
@@ -79,11 +80,13 @@ func (r *Repository) CleanupExpiredEntries() {
 		log.Printf("Cleaned up: %s (UUID: %s)", file.Identifier, file.UUID)
 	}
 
-	log.Printf("Cleanup completed. Removed %d expired entries", deletedCount)
+	if deletedCount != 0 {
+		log.Printf("Cleanup completed. Removed %d expired entries", deletedCount)
+	}
 }
 
 func (r *Repository) deleteDatabaseEntry(identifier string) error {
-	_, err := r.rw.Exec(`
+	_, err := r.wdb.Exec(`
         DELETE FROM files 
         WHERE identifier = ?`,
 		identifier)

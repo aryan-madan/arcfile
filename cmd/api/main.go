@@ -49,7 +49,7 @@ func main() {
 	repo := storage.NewRepository(roDB, rwDB)
 	handler := handlers.New(repo)
 
-	repo.StartCleanupRoutine(20 * time.Millisecond)
+	repo.StartCleanupRoutine(30 * time.Second)
 	// Set a lower memory limit for multipart forms (default is 32 MiB)
 	router := gin.Default()
 	router.MaxMultipartMemory = 10 << 20 // 10 MiB

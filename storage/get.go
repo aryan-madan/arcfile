@@ -19,7 +19,7 @@ func (e *FileNotFoundError) Error() string {
 func (r *Repository) GetFile(ctx context.Context, identifier string) (structures.File, error) {
 	query := "SELECT * FROM files WHERE identifier = ?"
 
-	rows, err := r.ro.QueryContext(ctx, query, identifier)
+	rows, err := r.rdb.QueryContext(ctx, query, identifier)
 
 	if err != nil {
 		return structures.File{}, &FileNotFoundError{identifier}
