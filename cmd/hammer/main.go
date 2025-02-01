@@ -2,6 +2,7 @@ package main
 
 import (
 	"bytes"
+	"io"
 	"log"
 	"mime/multipart"
 	"net/http"
@@ -18,18 +19,22 @@ func main() {
 		}
 		fw.Write([]byte("hello, world!"))
 		w.Close()
+
 		req, err := http.NewRequest(http.MethodPost, "http://localhost:8080/api/upload", buf)
 		if err != nil {
 			panic(err)
 		}
 		req.Header.Set("Content-Type", w.FormDataContentType())
+
 		resp, err := http.DefaultClient.Do(req)
 		if err != nil {
 			panic(err)
 		}
-		resp.Body.Close()
+
 		if resp.StatusCode != http.StatusOK {
-			log.Printf("unexpected status code: %d", resp.StatusCode)
+			body, _ := io.ReadAll(resp.Body)
+			log.Printf("unexpected status code: %d\nResponse: %s", resp.StatusCode, string(body))
 		}
+		resp.Body.Close()
 	}
 }
