@@ -9,6 +9,7 @@ import (
 
 	"github.com/gin-gonic/gin"
 	"github.com/nxrmqlly/arcfile-backend/handlers"
+	"github.com/nxrmqlly/arcfile-backend/ratelimits"
 	"github.com/nxrmqlly/arcfile-backend/storage"
 )
 
@@ -27,7 +28,7 @@ func main() {
 		}
 	}()
 
-	// Set up signal handling for graceful shutdown
+	// signal handling - graceful shutdown
 	quit := make(chan os.Signal, 1)
 	signal.Notify(quit, os.Interrupt, syscall.SIGTERM)
 
@@ -35,7 +36,7 @@ func main() {
 		<-quit
 		log.Println("Shutting down server...")
 
-		// Close the database connection
+		// close the database connection
 		if err := roDB.Close(); err != nil {
 			log.Printf("Error closing the database during shutdown: %v", err)
 		}
@@ -43,20 +44,25 @@ func main() {
 			log.Printf("Error closing the database during shutdown: %v", err)
 		}
 
-		os.Exit(0) // Ensure the app exits after cleanup
+		os.Exit(0)
 	}()
 
 	repo := storage.NewRepository(roDB, rwDB)
 	handler := handlers.New(repo)
 
 	repo.StartCleanupRoutine(30 * time.Second)
+
+	// Rate limiter setup
+	limiters := ratelimits.SetupLimiters()
+
 	// Set a lower memory limit for multipart forms (default is 32 MiB)
 	router := gin.Default()
 	router.MaxMultipartMemory = 10 << 20 // 10 MiB
+	// router.Use(middleware)
 
-	router.POST("/api/upload", handler.Upload)
-	router.GET("/api/file/:identifier", handler.FileInfo)
-	router.GET("/api/file/:identifier/download", handler.FileDownload)
+	router.POST("/api/upload", limiters["postFile"], handler.Upload)
+	router.GET("/api/file/:identifier", limiters["getFile"], handler.FileInfo)
+	router.GET("/api/file/:identifier/download", limiters["getFileDownload"], handler.FileDownload)
 
 	if err := router.Run("localhost:8080"); err != nil {
 		log.Fatalf("Error starting server: %v", err)
