@@ -4,6 +4,7 @@ import (
 	"net/http"
 	"os"
 	"path/filepath"
+	"regexp"
 	"time"
 
 	"github.com/google/uuid"
@@ -12,8 +13,11 @@ import (
 	"github.com/nxrmqlly/arcfile-backend/structures"
 )
 
+var EmailRegex = regexp.MustCompile(`^[^@]+@[^@]+\.[^@]+$`)
+
 // POST /api/upload
 func (h *Handlers) Upload(c *gin.Context) {
+
 	formFile, err := c.FormFile("file")
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
@@ -33,10 +37,10 @@ func (h *Handlers) Upload(c *gin.Context) {
 	}
 
 	email := c.PostForm("email")
-	if email == "" {
+	if email == "" || !EmailRegex.MatchString(email) {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"code":    http.StatusUnprocessableEntity,
-			"message": "email is required",
+			"message": "valid email is required",
 		})
 		return
 	}

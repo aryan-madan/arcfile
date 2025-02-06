@@ -12,7 +12,7 @@ func main() {
 	for {
 		buf := new(bytes.Buffer)
 		w := multipart.NewWriter(buf)
-		w.WriteField("email", "test")
+		w.WriteField("email", "test@example.co.in")
 		fw, err := w.CreateFormFile("file", "test.txt")
 		if err != nil {
 			panic(err)
