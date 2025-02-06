@@ -14,8 +14,6 @@ import (
 )
 
 func main() {
-
-	// fmt.Println("Hello world!") // for the win!!!
 	roDB, rwDB, err := storage.InitDatabase()
 	if err != nil {
 		log.Fatalf("Error initializing database: %v", err)
@@ -60,7 +58,7 @@ func main() {
 	// Set a lower memory limit for multipart forms (default is 32 MiB)
 	router := gin.Default()
 	router.MaxMultipartMemory = 10 << 20 // 10 MiB
-
+	// router.Use(middleware)
 
 	router.POST("/api/upload", limiters["postFile"], handler.Upload)
 	router.GET("/api/file/:identifier", limiters["getFile"], handler.FileInfo)
