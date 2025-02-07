@@ -79,7 +79,7 @@ func (r *Repository) ExpiredFiles(ctx context.Context) ([]structures.File, error
 	defer rows.Close()
 
 	var files []structures.File
-	
+
 	for rows.Next() {
 		var file structures.File
 		if err := rows.Scan(&file.Identifier, &file.UUID); err != nil {

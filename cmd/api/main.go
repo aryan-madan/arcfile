@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	"log"
 	"os"
 	"os/signal"
@@ -14,10 +15,22 @@ import (
 	"github.com/nxrmqlly/arcfile-backend/storage"
 )
 
+var tag = `
+    ___              _____ __   
+   /   |  __________/ __(_) /__ 
+  / /| | / ___/ ___/ /_/ / / _ \
+ / ___ |/ /  / /__/ __/ / /  __/
+/_/  |_/_/   \___/_/ /_/_/\___/ 
+
+Repository: https://github.com/nxrmqlly/arcfile
+Author: nxrmqlly (Ritam Das)
+`
+
 func main() {
 	if err := godotenv.Load(); err != nil {
 		panic(err)
 	}
+	fmt.Fprintf(os.Stdout, "\033[0;31m%s\033[0m\n\n", tag)
 
 	pool, err := storage.InitDatabase()
 	if err != nil {
@@ -48,8 +61,13 @@ func main() {
 	// Rate limiter setup
 	limiters := ratelimits.SetupLimiters()
 
-	// Set a lower memory limit for multipart forms (default is 32 MiB)
+	if os.Getenv("GIN_MODE") == "release" {
+		gin.SetMode(gin.ReleaseMode)
+	}
+
 	router := gin.Default()
+
+	// Set a lower memory limit for multipart forms (default is 32 MiB)
 	router.MaxMultipartMemory = 10 << 20 // 10 MiB
 
 	router.Static("/static", "./static") // Serves static CSS and JS
