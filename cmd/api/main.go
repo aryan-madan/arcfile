@@ -70,7 +70,7 @@ func main() {
 
 	router.POST("/api/upload", limiters["postFile"], handler.Upload)
 	router.GET("/api/file/:identifier", limiters["getFile"], handler.FileInfo)
-	router.GET("/api/file/:identifier/download", limiters["getFileDownload"], handler.FileDownload)
+	router.GET("/api/file/:identifier/download", handler.FileDownload)
 
 	if err := router.Run("localhost:8080"); err != nil {
 		log.Fatalf("Error starting server: %v", err)

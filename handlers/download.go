@@ -1,37 +1,29 @@
 package handlers
 
 import (
-	"errors"
+	"fmt"
 	"net/http"
 	"path"
 
 	"github.com/gin-gonic/gin"
-	"github.com/nxrmqlly/arcfile-backend/storage"
 )
 
 // GET /api/file/:identifier/download
 func (h *Handlers) FileDownload(c *gin.Context) {
 	identifier := c.Param("identifier")
+	fmt.Println("Downloading file with identifier:", identifier)
 
 	file, err := h.repo.GetFile(c, identifier)
+	fmt.Println("File:", file)
 
-	var ae *storage.FileNotFoundError
 	if err != nil {
-		if errors.As(err, &ae) {
-			c.JSON(http.StatusNotFound, gin.H{
-				"code":    http.StatusNotFound,
-				"message": err.Error(),
-			})
-			return
-		} else {
-			// some other internal error
-			c.JSON(http.StatusInternalServerError, gin.H{
-				"code":    http.StatusInternalServerError,
-				"message": err.Error(),
-			})
-			return
-		}
+		c.JSON(http.StatusInternalServerError, gin.H{
+			"code":    http.StatusInternalServerError,
+			"message": err.Error(),
+		})
 	}
+
 	path := path.Join("data", "uploads", file.UUID)
+	fmt.Println("path is ", path)
 	c.FileAttachment(path, file.Filename)
 }

@@ -2,8 +2,154 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Arcfile</title>
+    <title>File Upload and Download</title>
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        margin: 2rem;
+      }
+      form {
+        margin-bottom: 1.5rem;
+      }
+      label {
+        display: block;
+        margin-top: 0.5rem;
+      }
+      input,
+      button {
+        margin-top: 0.3rem;
+      }
+      .result {
+        margin-top: 0.5rem;
+        color: #333;
+      }
+    </style>
   </head>
-  <body></body>
+  <body>
+    <h1>File Upload</h1>
+    <form id="uploadForm">
+      <label for="fileInput">Select File:</label>
+      <input type="file" id="fileInput" name="file" required />
+
+      <label for="emailInput">Email:</label>
+      <input
+        type="email"
+        id="emailInput"
+        name="email"
+        placeholder="your.email@example.com"
+        required
+      />
+
+      <button type="submit">Upload File</button>
+    </form>
+    <div id="uploadResult" class="result"></div>
+
+    <h1>File Download</h1>
+    <form id="downloadForm">
+      <label for="identifierDownload">Enter Identifier:</label>
+      <input
+        type="text"
+        id="identifierDownload"
+        name="identifier"
+        placeholder="e.g., F0LFBH"
+        required
+      />
+      <button type="submit">Download File</button>
+    </form>
+    <div id="downloadResult" class="result"></div>
+
+    <script>
+      // Handle file upload
+      document
+        .getElementById("uploadForm")
+        .addEventListener("submit", function (event) {
+          event.preventDefault();
+
+          const fileInput = document.getElementById("fileInput");
+          const emailInput = document.getElementById("emailInput");
+          const uploadResult = document.getElementById("uploadResult");
+
+          // Prepare form data
+          const formData = new FormData();
+          formData.append("file", fileInput.files[0]);
+          formData.append("email", emailInput.value);
+
+          // POST to /api/upload
+          fetch("/api/upload", {
+            method: "POST",
+            body: formData,
+          })
+            .then((response) => response.json())
+            .then((data) => {
+              // Check for successful upload (code 200)
+              if (data.code === 200) {
+                uploadResult.innerHTML = `
+            <strong>Success:</strong> ${data.message}<br>
+            <strong>Identifier:</strong> ${data.data.identifier}<br>
+            <strong>Filename:</strong> ${data.data.filename}<br>
+            <strong>Email:</strong> ${data.data.email}
+          `;
+              } else {
+                // Show error message (for example, missing/invalid email)
+                uploadResult.innerHTML = `<strong>Error:</strong> ${data.message}`;
+              }
+            })
+            .catch((error) => {
+              uploadResult.innerHTML = `<strong>Error:</strong> ${error}`;
+            });
+        });
+
+      // Handle file download
+      document
+        .getElementById("downloadForm")
+        .addEventListener("submit", function (event) {
+          event.preventDefault();
+
+          const identifier =
+            document.getElementById("identifierDownload").value;
+          const downloadResult = document.getElementById("downloadResult");
+          const url = `/api/file/${identifier}/download`;
+
+          fetch(url)
+            .then((response) => {
+              if (!response.ok) {
+                return response.text().then((body) => {
+                  throw new Error(
+                    `Failed to download file. Please check the identifier and try again.\nResponse: ${body}`
+                  );
+                });
+              }
+
+              // Optionally extract filename from headers (if provided)
+              const disposition = response.headers.get("Content-Disposition");
+              let filename = "downloaded_file";
+              if (disposition && disposition.indexOf("filename=") !== -1) {
+                const filenameRegex = /filename[^;=\n]*=((['"]).*?\2|[^;\n]*)/;
+                const matches = filenameRegex.exec(disposition);
+                if (matches && matches[1]) {
+                  filename = matches[1].replace(/['"]/g, "");
+                }
+              }
+              return response
+                .blob()
+                .then((blob) => ({ blob: blob, filename: filename }));
+            })
+            .then((obj) => {
+              // Create a temporary link to trigger download
+              const downloadUrl = window.URL.createObjectURL(obj.blob);
+              const a = document.createElement("a");
+              a.href = downloadUrl;
+              a.download = obj.filename;
+              document.body.appendChild(a);
+              a.click();
+              a.remove();
+              window.URL.revokeObjectURL(downloadUrl);
+              downloadResult.innerHTML = "Download initiated.";
+            })
+            .catch((error) => {
+              downloadResult.innerHTML = `<strong>Error:</strong> ${error.message}`;
+            });
+        });
+    </script>
+  </body>
 </html>
