@@ -61,6 +61,12 @@ func main() {
 	router := gin.Default()
 	router.MaxMultipartMemory = 10 << 20 // 10 MiB
 
+	router.Static("/static", "./static") // Serves static CSS and JS
+	router.LoadHTMLGlob("templates/*")   // Loads HTML templates
+
+	router.GET("/", func(c *gin.Context) {
+		c.HTML(200, "index.html", nil)
+	})
 
 	router.POST("/api/upload", limiters["postFile"], handler.Upload)
 	router.GET("/api/file/:identifier", limiters["getFile"], handler.FileInfo)
