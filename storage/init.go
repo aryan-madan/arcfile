@@ -5,17 +5,17 @@ import (
 	"fmt"
 	"os"
 
-	"github.com/jackc/pgx/v5"
+	"github.com/jackc/pgx/v5/pgxpool"
 	_ "modernc.org/sqlite"
 )
 
-func InitDatabase() (*pgx.Conn, error) {
+func InitDatabase() (*pgxpool.Pool, error) {
 	// ensure dir exisits
 	if err := os.MkdirAll("./data", os.ModePerm); err != nil {
 		return nil, fmt.Errorf("create data dir: %w", err)
 	}
 
-	conn, err := pgx.Connect(context.Background(), os.Getenv("DATABASE_URL"))
+	pool, err := pgxpool.New(context.Background(), os.Getenv("DATABASE_URL"))
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "Unable to connect to database: %v\n", err)
 		os.Exit(1)
@@ -31,10 +31,10 @@ func InitDatabase() (*pgx.Conn, error) {
         email TEXT NOT NULL
     );`
 
-	_, err = conn.Exec(context.Background(), createTable)
+	_, err = pool.Exec(context.Background(), createTable)
 	if err != nil {
 		return nil, fmt.Errorf("create table: %w", err)
 	}
 
-	return conn, nil
+	return pool, nil
 }

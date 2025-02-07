@@ -19,17 +19,11 @@ func (e *FileNotFoundError) Error() string {
 func (r *Repository) GetFile(ctx context.Context, identifier string) (structures.File, error) {
 	query := "SELECT * FROM arcfile_files WHERE identifier = $1"
 
-	rows, err := r.pool.Query(ctx, query, identifier)
-
-	if err != nil {
-		return structures.File{}, &FileNotFoundError{identifier}
-	}
+	row := r.pool.QueryRow(ctx, query, identifier)
 
 	var File = structures.File{}
 
-	rows.Next()
-
-	if err := rows.Scan(
+	if err := row.Scan(
 		&File.Identifier,
 		&File.Filename,
 		&File.UUID,

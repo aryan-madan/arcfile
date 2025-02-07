@@ -48,6 +48,7 @@ func (r *Repository) CreateFile(
 		file.ExpiresAt,
 		file.Email,
 	)
+
 	err := rows.Scan(
 		&file.Identifier,
 	)

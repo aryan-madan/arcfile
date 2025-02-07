@@ -1,7 +1,6 @@
 package main
 
 import (
-	"context"
 	"log"
 	"os"
 	"os/signal"
@@ -25,11 +24,7 @@ func main() {
 		log.Fatalf("Error initializing database: %v", err)
 	}
 
-	defer func() {
-		if err := pool.Close(context.Background()); err != nil {
-			log.Fatalf("Error closing the database: %v", err)
-		}
-	}()
+	defer pool.Close()
 
 	// signal handling - graceful shutdown
 	quit := make(chan os.Signal, 1)
@@ -40,9 +35,7 @@ func main() {
 		log.Println("Shutting down server...")
 
 		// close the database connection
-		if err := pool.Close(context.Background()); err != nil {
-			log.Fatalf("Error closing the database: %v", err)
-		}
+		pool.Close()
 
 		os.Exit(0)
 	}()
@@ -68,7 +61,7 @@ func main() {
 
 	router.POST("/api/upload", limiters["postFile"], handler.Upload)
 	router.GET("/api/file/:identifier", limiters["getFile"], handler.FileInfo)
-	router.GET("/api/file/:identifier/download", handler.FileDownload)
+	router.GET("/api/download/:identifier", handler.FileDownload)
 
 	if err := router.Run("localhost:8080"); err != nil {
 		log.Fatalf("Error starting server: %v", err)
