@@ -108,7 +108,7 @@
           const identifier =
             document.getElementById("identifierDownload").value;
           const downloadResult = document.getElementById("downloadResult");
-          const url = `/api/file/${identifier}/download`;
+          const url = `/api/download/${identifier}`;
 
           fetch(url)
             .then((response) => {
