@@ -33,12 +33,12 @@ func (r *Repository) CreateFile(
 	log.Println("generated identifier:", identifier)
 
 	query := `
-        INSERT INTO files 
+        INSERT INTO arcfile_files 
         (identifier, filename, uuid, created_at, expires_at, email) 
-        VALUES (?, ?, ?, ?, ?, ?) 
+        VALUES ($1, $2, $3, $4, $5, $6) 
         RETURNING identifier;`
 
-	rows := r.wdb.QueryRowContext(
+	rows := r.pool.QueryRow(
 		ctx,
 		query,
 		identifier,

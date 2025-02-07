@@ -1,6 +1,7 @@
 package storage
 
 import (
+	"context"
 	"log"
 	"os"
 	"path"
@@ -10,28 +11,66 @@ import (
 	"github.com/nxrmqlly/arcfile-backend/structures"
 )
 
-// starts a background cleaner for files //
+// starts a background cleaner for files
 func (r *Repository) StartCleanupRoutine(interval time.Duration) {
+	ctx := context.TODO()
+	defer ctx.Done()
 	go func() {
 
 		// startup
-		r.CleanupExpiredEntries()
+		expired, err := r.ExpiredFiles(context.TODO())
+		if err != nil {
+			log.Printf("Failed to fetch expired files: %v", err)
+			return
+		}
+
+		r.CleanupExpired(ctx, expired)
 
 		ticker := time.NewTicker(interval)
 		defer ticker.Stop()
 
 		for range ticker.C {
-			r.CleanupExpiredEntries()
+			expired, err := r.ExpiredFiles(context.TODO())
+			if err != nil {
+				log.Printf("Failed to fetch expired files: %v", err)
+				return
+			}
+
+			r.CleanupExpired(ctx, expired)
 		}
 	}()
 }
 
-func (r *Repository) ExpiredFiles() ([]structures.File, error) {
+// delete all expired files
+func (r *Repository) CleanupExpired(ctx context.Context, files []structures.File) {
+	storagePath := path.Join("data", "uploads")
+
+	var deletedCount int
+	for _, file := range files {
+		filePath := filepath.Join(storagePath, file.UUID)
+		err := r.DelteFile(ctx, file.Identifier, filePath)
+		if err != nil {
+			log.Printf("Failed to delete file %s: %v", filePath, err)
+			continue
+		}
+
+		deletedCount++
+		log.Printf("Cleaned up: %s (UUID: %s)", file.Identifier, file.UUID)
+	}
+
+	if deletedCount != 0 {
+		log.Printf("Cleanup completed. Removed %d expired entries", deletedCount)
+	}
+
+}
+
+// get expired files
+func (r *Repository) ExpiredFiles(ctx context.Context) ([]structures.File, error) {
 	timeNow := time.Now().UTC()
-	rows, err := r.rdb.Query(`
+	rows, err := r.pool.Query(ctx, `
         SELECT identifier, uuid 
-        FROM files 
-        WHERE expires_at <= ?
+        FROM arcfile_files 
+        WHERE expires_at <= $1
         `,
 		timeNow)
 	if err != nil {
@@ -55,40 +94,22 @@ func (r *Repository) ExpiredFiles() ([]structures.File, error) {
 	return files, nil
 }
 
-func (r *Repository) CleanupExpiredEntries() {
-	storagePath := path.Join("data", "uploads")
-
-	files, err := r.ExpiredFiles()
-	if err != nil {
-		log.Printf("Failed to fetch expired files: %v", err)
-		return
+// deletes file from disk
+func (r *Repository) DelteFile(ctx context.Context, identifier string, filePath string) error {
+	if err := r.DeleteDatabaseEntry(ctx, identifier); err != nil {
+		return err
 	}
-
-	var deletedCount int
-	for _, file := range files {
-		filePath := filepath.Join(storagePath, file.UUID)
-		if err := r.deleteDatabaseEntry(file.Identifier); err != nil {
-			log.Printf("Database cleanup failed (%s): %v", file.Identifier, err)
-			continue
-		}
-		if err := os.Remove(filePath); err != nil && !os.IsNotExist(err) {
-			log.Printf("File deletion failed (%s): %v", file.UUID, err)
-			continue
-		}
-
-		deletedCount++
-		log.Printf("Cleaned up: %s (UUID: %s)", file.Identifier, file.UUID)
+	if err := os.Remove(filePath); err != nil && !os.IsNotExist(err) {
+		return err
 	}
-
-	if deletedCount != 0 {
-		log.Printf("Cleanup completed. Removed %d expired entries", deletedCount)
-	}
+	return nil
 }
 
-func (r *Repository) deleteDatabaseEntry(identifier string) error {
-	_, err := r.wdb.Exec(`
-        DELETE FROM files 
-        WHERE identifier = ?`,
+// deletes from database
+func (r *Repository) DeleteDatabaseEntry(ctx context.Context, identifier string) error {
+	_, err := r.pool.Exec(ctx, `
+        DELETE FROM arcfile_files 
+        WHERE identifier = $1`,
 		identifier)
 
 	return err

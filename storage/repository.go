@@ -1,11 +1,13 @@
 package storage
 
-import "database/sql"
+import (
+	"github.com/jackc/pgx/v5"
+)
 
 type Repository struct {
-	rdb, wdb *sql.DB
+	pool *pgx.Conn
 }
 
-func NewRepository(rdb *sql.DB, wdb *sql.DB) *Repository {
-	return &Repository{rdb: rdb, wdb: wdb}
+func NewRepository(pool *pgx.Conn) *Repository {
+	return &Repository{pool: pool}
 }

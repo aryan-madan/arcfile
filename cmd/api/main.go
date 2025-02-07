@@ -1,6 +1,7 @@
 package main
 
 import (
+	"context"
 	"log"
 	"os"
 	"os/signal"
@@ -8,24 +9,24 @@ import (
 	"time"
 
 	"github.com/gin-gonic/gin"
+	"github.com/joho/godotenv"
 	"github.com/nxrmqlly/arcfile-backend/handlers"
 	"github.com/nxrmqlly/arcfile-backend/ratelimits"
 	"github.com/nxrmqlly/arcfile-backend/storage"
 )
 
 func main() {
+	if err := godotenv.Load(); err != nil {
+		panic(err)
+	}
 
-	// fmt.Println("Hello world!") // for the win!!!
-	roDB, rwDB, err := storage.InitDatabase()
+	pool, err := storage.InitDatabase()
 	if err != nil {
 		log.Fatalf("Error initializing database: %v", err)
 	}
 
 	defer func() {
-		if err := roDB.Close(); err != nil {
-			log.Fatalf("Error closing the database: %v", err)
-		}
-		if err := rwDB.Close(); err != nil {
+		if err := pool.Close(context.Background()); err != nil {
 			log.Fatalf("Error closing the database: %v", err)
 		}
 	}()
@@ -39,17 +40,14 @@ func main() {
 		log.Println("Shutting down server...")
 
 		// close the database connection
-		if err := roDB.Close(); err != nil {
-			log.Printf("Error closing the database during shutdown: %v", err)
-		}
-		if err := rwDB.Close(); err != nil {
-			log.Printf("Error closing the database during shutdown: %v", err)
+		if err := pool.Close(context.Background()); err != nil {
+			log.Fatalf("Error closing the database: %v", err)
 		}
 
 		os.Exit(0)
 	}()
 
-	repo := storage.NewRepository(roDB, rwDB)
+	repo := storage.NewRepository(pool)
 	handler := handlers.New(repo)
 
 	repo.StartCleanupRoutine(30 * time.Second)

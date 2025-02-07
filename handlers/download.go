@@ -23,7 +23,27 @@ func (h *Handlers) FileDownload(c *gin.Context) {
 		})
 	}
 
-	path := path.Join("data", "uploads", file.UUID)
-	fmt.Println("path is ", path)
-	c.FileAttachment(path, file.Filename)
+	filePath := path.Join("data", "uploads", file.UUID)
+
+	fmt.Println("path is ", filePath)
+
+	err = h.repo.DeleteDatabaseEntry(c, identifier)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{
+			"code":    http.StatusInternalServerError,
+			"message": err.Error(),
+		})
+		return
+	}
+
+	err = h.repo.DelteFile(c, identifier, filePath)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{
+			"code":    http.StatusInternalServerError,
+			"message": err.Error(),
+		})
+		return
+	}
+
+	c.FileAttachment(filePath, file.Filename)
 }
