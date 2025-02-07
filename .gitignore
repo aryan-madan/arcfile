@@ -26,5 +26,6 @@ go.work.sum
 .env
 
 data/
+bin/
 
 *.test.py
