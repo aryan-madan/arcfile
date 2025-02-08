@@ -1,0 +1,23 @@
+body {
+    font-family: Arial, sans-serif;
+    margin: 2rem;
+}
+
+form {
+    margin-bottom: 1.5rem;
+}
+
+label {
+    display: block;
+    margin-top: 0.5rem;
+}
+
+input,
+button {
+    margin-top: 0.3rem;
+}
+
+.result {
+    margin-top: 0.5rem;
+    color: #333;
+}

@@ -77,11 +77,8 @@ func main() {
 	router.GET("/api/file/:identifier", limiters["getFile"], handler.FileInfo)
 	router.GET("/api/download/:identifier", handler.FileDownload)
 
-	port := os.Getenv("port")
-	if port == "" {
-		port = "8080"
-	}
-	if err := router.Run("localhost:" + port); err != nil {
+
+	if err := router.Run("0.0.0.0:8080" ); err != nil {
 		log.Fatalf("Error starting server: %v", err)
 	}
 }
