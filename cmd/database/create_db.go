@@ -2,7 +2,7 @@ package main
 
 import (
 	"github.com/joho/godotenv"
-	"github.com/nxrmqlly/arcfile-backend/storage"
+	"github.com/nxrmqlly/arcfile/storage"
 	_ "modernc.org/sqlite"
 )
 

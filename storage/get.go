@@ -4,7 +4,7 @@ import (
 	"context"
 	"fmt"
 
-	"github.com/nxrmqlly/arcfile-backend/structures"
+	"github.com/nxrmqlly/arcfile/structures"
 	_ "modernc.org/sqlite"
 )
 
