@@ -61,7 +61,8 @@ func main() {
 	// Rate limiter setup
 	limiters := ratelimits.SetupLimiters()
 
-	if os.Getenv("GIN_MODE") == "release" {
+	mode := os.Getenv("GIN_MODE")
+	if mode == "release" {
 		gin.SetMode(gin.ReleaseMode)
 	}
 
@@ -70,6 +71,7 @@ func main() {
 	// Set a lower memory limit for multipart forms (default is 32 MiB)
 	router.MaxMultipartMemory = 10 << 20 // 10 MiB
 
+	router.StaticFS("/public", http.FS(public.Templates))
 	router.StaticFileFS("/about", "about.html", http.FS(public.Templates))
 	router.StaticFileFS("/", "app.html", http.FS(public.Templates))
 
@@ -77,8 +79,13 @@ func main() {
 	router.GET("/api/file/:identifier", limiters["getFile"], handler.FileInfo)
 	router.GET("/api/download/:identifier", handler.FileDownload)
 
-
-	if err := router.Run("0.0.0.0:8080" ); err != nil {
+	var addr string
+	if mode == "release" {
+		addr = "0.0.0.0:8080"
+	} else {
+		addr = "localhost:8080"
+	}
+	if err := router.Run(addr); err != nil {
 		log.Fatalf("Error starting server: %v", err)
 	}
 }
