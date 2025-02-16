@@ -2,6 +2,7 @@
   --primary-color: #8B5CF6;
   --text-color: white;
   --text-color-secondary: rgba(255, 255, 255, 0.7);
+  --text-color-tertiary: rgba(147, 147, 147, 0.7);
   --background-color: #000;
   --input-background-color: rgba(255, 255, 255, 0.05);
   --input-background-color-focus: rgba(255, 255, 255, 0.1);
@@ -19,11 +20,28 @@ body {
   background-color: var(--background-color);
   color: var(--text-color);
   min-height: 100vh;
+  width: 100vw;
   display: flex;
   flex-direction: column;
   align-items: center;
   padding-top: 48px;
   position: relative;
+}
+
+main {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 100%;
+}
+
+.upper-title {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
 }
 
 .top-section {
@@ -32,9 +50,10 @@ body {
 }
 
 .main-title {
+  height: 100%;
   font-size: 32px;
   font-weight: 500;
-  margin: 24px 0 12px;
+  margin: 12px 0 24px;
 }
 
 .subtitle {
@@ -49,7 +68,7 @@ body {
 }
 
 .flower-icon path {
-  fill: var(--primary-color);
+  fill: url(#gradient)
 }
 
 .container {
@@ -61,6 +80,11 @@ body {
 }
 
 @media (max-width: 768px) {
+  body {
+    height: 100vh;
+    padding: 0;
+  }
+
   .container {
     flex-direction: column;
     padding: 0 16px;
@@ -114,6 +138,13 @@ body {
   z-index: -1;
   opacity: 0.5;
   transition: opacity 0.3s ease;
+}
+
+.download-form {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
 }
 
 .download-box::before {
@@ -210,7 +241,9 @@ body {
   border-radius: 8px;
   padding: 12px 24px;
   display: flex;
+  justify-content: center;
   align-items: center;
+  width: 100%;
   gap: 8px;
   cursor: pointer;
   font-size: 16px;
@@ -220,7 +253,7 @@ body {
 
 .download-button:hover {
   background-color: rgba(139, 92, 246, 0.2);
-  border-color: rgba(139, 92, 246, 0.5);
+  border-color: rgba(139, 92, 246, 0.502);
 }
 
 .arcfile-text {
@@ -234,15 +267,15 @@ body {
 }
 
 .arcfile-text {
-  font-size: 200px; 
-  letter-spacing: -5px; 
+  font-size: 200px;
+  letter-spacing: -5px;
 }
 
 @media (max-width: 600px) {
   .arcfile-text {
-    font-size: 120px; 
-    letter-spacing: -3px; 
-    bottom: 16px; 
+    font-size: 120px;
+    letter-spacing: -3px;
+    bottom: 16px;
     display: none;
   }
 }
@@ -261,9 +294,9 @@ body {
 }
 
 .remove-file-button {
-  background-color: rgba(255, 0, 0, 0.1); 
+  background-color: rgba(255, 0, 0, 0.1);
   color: var(--text-color);
-  border: 1px solid rgba(255, 0, 0, 0.3); 
+  border: 1px solid rgba(255, 0, 0, 0.3);
   border-radius: 12px;
   padding: 6px 12px;
   display: flex;
@@ -281,4 +314,29 @@ body {
 .remove-file-button:hover {
   background-color: rgba(255, 0, 0, 0.2);
   border-color: rgba(255, 0, 0, 0.5);
+}
+
+footer {
+  position: absolute;
+  bottom: 0%;
+  left: 50%;
+  transform: translateX(-50%);
+  color: var(--text-color-tertiary);
+  font-size: 14px;
+
+  display: flex;
+  justify-content: center;
+
+  width: 100%;
+  margin-bottom: 0.5vh;
+}
+
+footer a {
+  color: var(--text-color-tertiary);
+  text-decoration: none;
+  transition: color 0.3s ease;
+}
+
+footer a:hover {
+  color: var(--primary-color);
 }

@@ -3,7 +3,9 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>arcfile</title>
+    <title>Arcfile</title>
+    <link rel="icon" type="image/x-icon" href="/public/img/favicon.ico" />
+    <link rel="icon" type="image/svg+xml" href="/public/img/flower-icon.svg" />
     <link rel="stylesheet" href="/public/css/app.css" />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -13,110 +15,143 @@
     />
   </head>
   <body>
-    <div class="top-section">
-      <!-- Purple flower icon -->
-      <svg class="flower-icon" viewBox="0 0 24 24">
-        <path
-          d="M12 2L14.5 9.5L22 12L14.5 14.5L12 22L9.5 14.5L2 12L9.5 9.5L12 2Z"
-        />
-      </svg>
-      <h1 class="main-title">Arcfile</h1>
-      <p class="subtitle">you can transfer files ig - ary <3</p>
-    </div>
-
-    <div class="container">
-      <!-- Upload Section -->
-      <div class="box-wrapper">
-        <span class="box-label">Upload</span>
-        <div class="upload-box gradient-border">
-          <p class="upload-text">drop files or click to upload</p>
-          <div class="upload-area" id="uploadArea">
-            <div class="upload-icon-circle">
-              <svg
-                class="upload-icon"
-                width="24"
-                height="24"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                stroke-width="2"
-              >
-                <path d="M12 19V5M5 12l7-7 7 7" />
-              </svg>
-            </div>
-            <input
-              type="file"
-              id="fileInput"
-              name="file"
-              class="file-input"
-              required
-            />
-          </div>
-          <form id="uploadForm" style="display: none">
-            <input
-              type="email"
-              id="emailInput"
-              name="email"
-              placeholder="your.email@example.com"
-              class="code-input"
-              required
-            />
-            <button type="submit" class="download-button">Upload File</button>
-            <div class="remove-file-button" id="removeFileButton">
-              <svg
-                width="16"
-                height="16"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                stroke-width="2"
-                stroke-linecap="round"
-                stroke-linejoin="round"
-              >
-                <line x1="18" y1="6" x2="6" y2="18"></line>
-                <line x1="6" y1="6" x2="18" y2="18"></line>
-              </svg>
-              Remove
-            </div>
-          </form>
-          <div id="uploadResult" class="result" style="display: none"></div>
+    <main>
+      <div class="top-section">
+        <!-- Purple flower icon -->
+        <div class="upper-title">
+          <img
+            src="/public/img/flower-icon.svg"
+            alt="Arcfile logo"
+            class="flower-icon"
+          />
+          <h1 class="main-title">Arcfile</h1>
         </div>
+        <p class="subtitle">
+          seamlessly simple, effortless temporary file sharing.
+        </p>
       </div>
-
-      <!-- Download Section -->
-      <div class="box-wrapper">
-        <span class="box-label">Download</span>
-        <div class="download-box gradient-border">
-          <form id="downloadForm">
-            <div class="input-group">
+      <div class="container">
+        <!-- Upload Section -->
+        <div class="box-wrapper">
+          <span class="box-label">Upload</span>
+          <div class="upload-box gradient-border">
+            <p class="upload-text">drop files or click to upload</p>
+            <div class="upload-area" id="uploadArea">
+              <div class="upload-icon-circle">
+                <svg
+                  class="upload-icon"
+                  width="24"
+                  height="24"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                >
+                  <path d="M12 19V5M5 12l7-7 7 7" />
+                </svg>
+              </div>
               <input
-                type="text"
-                id="identifierDownload"
-                name="identifier"
-                placeholder="enter your download code"
-                class="code-input"
+                type="file"
+                id="fileInput"
+                name="file"
+                class="file-input"
                 required
               />
             </div>
-            <button type="submit" class="download-button">
-              download file
-              <svg
-                width="16"
-                height="16"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                stroke-width="2"
-              >
-                <path d="M12 5v14M5 12l7 7 7-7" />
-              </svg>
-            </button>
-          </form>
-          <div id="downloadResult" class="result" style="display: none"></div>
+            <form id="uploadForm" style="display: none">
+              <input
+                type="email"
+                id="emailInput"
+                name="email"
+                placeholder="your.email@example.com"
+                class="code-input"
+                required
+              />
+              <button type="submit" class="download-button">
+                upload file
+                <svg
+                  width="16"
+                  height="16"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                >
+                  <path d="M12 19V5M5 12l7-7 7 7" />
+                </svg>
+              </button>
+              <div class="remove-file-button" id="removeFileButton">
+                <svg
+                  width="16"
+                  height="16"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                >
+                  <line x1="18" y1="6" x2="6" y2="18"></line>
+                  <line x1="6" y1="6" x2="18" y2="18"></line>
+                </svg>
+                Remove
+              </div>
+            </form>
+            <div id="uploadResult" class="result" style="display: none"></div>
+          </div>
+        </div>
+        <!-- Download Section -->
+        <div class="box-wrapper">
+          <span class="box-label">Download</span>
+          <div class="download-box gradient-border">
+            <form class="download-form" id="downloadForm">
+              <div class="input-group">
+                <input
+                  type="text"
+                  id="identifierDownload"
+                  name="identifier"
+                  placeholder="enter your download code"
+                  class="code-input"
+                  required
+                />
+              </div>
+              <button type="submit" class="download-button">
+                download file
+                <svg
+                  width="16"
+                  height="16"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                >
+                  <path d="M12 5v14M5 12l7 7 7-7" />
+                </svg>
+              </button>
+            </form>
+            <div id="downloadResult" class="result" style="display: none"></div>
+          </div>
         </div>
       </div>
-    </div>
-    <div class="arcfile-text">arcfile</div>
+      <footer>
+        <p>
+          made with &hearts; by
+          <a
+            href="http://github.com/nxrmqlly"
+            target="_blank"
+            rel="noopener noreferrer"
+            >nxrmqlly</a
+          >
+          &sdot;
+          <a
+            href="http://github.com/nxrmqlly/arcfile"
+            target="_blank"
+            rel="noopener noreferrer"
+            >source</a
+          >
+        </p>
+      </footer>
+    </main>
 
     <script src="/public/js/app.js"></script>
   </body>
