@@ -8,7 +8,7 @@ import (
 	"path/filepath"
 	"time"
 
-	"github.com/nxrmqlly/arcfile-backend/structures"
+	"github.com/nxrmqlly/arcfile/structures"
 )
 
 // starts a background cleaner for files

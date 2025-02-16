@@ -1,6 +1,6 @@
 package handlers
 
-import "github.com/nxrmqlly/arcfile-backend/storage"
+import "github.com/nxrmqlly/arcfile/storage"
 
 type Handlers struct {
 	repo *storage.Repository

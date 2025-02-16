@@ -5,7 +5,7 @@ import (
 	"net/http"
 
 	"github.com/gin-gonic/gin"
-	"github.com/nxrmqlly/arcfile-backend/storage"
+	"github.com/nxrmqlly/arcfile/storage"
 )
 
 // GET /api/file/:identifier

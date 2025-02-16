@@ -10,7 +10,7 @@ import (
 	"github.com/google/uuid"
 
 	"github.com/gin-gonic/gin"
-	"github.com/nxrmqlly/arcfile-backend/structures"
+	"github.com/nxrmqlly/arcfile/structures"
 )
 
 var EmailRegex = regexp.MustCompile(`^[^@]+@[^@]+\.[^@]+$`)

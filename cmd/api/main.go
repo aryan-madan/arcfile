@@ -11,10 +11,10 @@ import (
 
 	"github.com/gin-gonic/gin"
 	"github.com/joho/godotenv"
-	"github.com/nxrmqlly/arcfile-backend/handlers"
-	"github.com/nxrmqlly/arcfile-backend/public"
-	"github.com/nxrmqlly/arcfile-backend/ratelimits"
-	"github.com/nxrmqlly/arcfile-backend/storage"
+	"github.com/nxrmqlly/arcfile/handlers"
+	"github.com/nxrmqlly/arcfile/public"
+	"github.com/nxrmqlly/arcfile/ratelimits"
+	"github.com/nxrmqlly/arcfile/storage"
 )
 
 var tag = `
