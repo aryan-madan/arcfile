@@ -1,27 +1,38 @@
 version: '3.8'
 
+x-db-env: &common-db-env
+  POSTGRES_USER: myuser
+  POSTGRES_PASSWORD: mypassword
+  POSTGRES_DB: mydatabase
+
+x-api-env: &common-api-env
+  DATABASE_URL: postgres://${POSTGRES_USER}:${POSTGRES_PASSWORD}@db:5432/${POSTGRES_DB}
+  GIN_MODE: release
+
 services:
   db:
     image: postgres
     environment:
-      POSTGRES_USER: yourusername
-      POSTGRES_PASSWORD: yourpassword
-      POSTGRES_DB: yourdatabase
+      <<: *common-db-env
     volumes:
       - pg_data:/var/lib/postgresql/data
     networks:
       - app-network
-
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER}"]
+      interval: 5s
+      retries: 5
+      start_period: 10s
 
   api:
     build: .
     ports:
       - "8080:8080"
     environment:
-      DATABASE_URL: postgres://yourusername:yourpassword@db:5432/yourdatabase
-      GIN_MODE: release
+      <<: *common-api-env
     depends_on:
-      - db
+      db:
+        condition: service_healthy
     networks:
       - app-network
 
