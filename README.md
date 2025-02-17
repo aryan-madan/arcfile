@@ -97,6 +97,6 @@ After running the service, the API should be accessible at:
 
 Acknowledgments
 
-- Thanks to @aryan-madan for help with frontend ([web](https://aryanmadan.vercel.app))
+- Thanks to [Aryan Madan](https://github.com/aryan-madan) ([web](https://aryanmadan.vercel.app)) for help with frontend 
 
-- Thanks to @deitrix (Big Phil) for help with the database
+- Thanks to [Big Phil](https://github.com/deitrix) for help with the database
