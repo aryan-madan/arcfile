@@ -29,9 +29,7 @@ Author: nxrmqlly (Ritam Das)
 `
 
 func main() {
-	if err := godotenv.Load(".env"); err != nil {
-		panic(err)
-	}
+	godotenv.Load()
 	fmt.Fprintf(os.Stdout, "\033[0;31m%s\033[0m\n\n", tag)
 
 	pool, err := storage.InitDatabase()
