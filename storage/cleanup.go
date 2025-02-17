@@ -48,7 +48,7 @@ func (r *Repository) CleanupExpired(ctx context.Context, files []structures.File
 	var deletedCount int
 	for _, file := range files {
 		filePath := filepath.Join(storagePath, file.UUID)
-		err := r.DelteFile(ctx, file.Identifier, filePath)
+		err := r.DeleteFile(ctx, file.Identifier, filePath)
 		if err != nil {
 			log.Printf("Failed to delete file %s: %v", filePath, err)
 			continue
@@ -96,7 +96,7 @@ func (r *Repository) ExpiredFiles(ctx context.Context) ([]structures.File, error
 }
 
 // deletes file from disk
-func (r *Repository) DelteFile(ctx context.Context, identifier string, filePath string) error {
+func (r *Repository) DeleteFile(ctx context.Context, identifier string, filePath string) error {
 	if err := r.DeleteDatabaseEntry(ctx, identifier); err != nil {
 		return err
 	}

@@ -17,6 +17,7 @@ services:
     networks:
       - app-network
     restart: unless-stopped
+    tty: true
 
   api:
     build: .
@@ -32,6 +33,7 @@ services:
     networks:
       - app-network
     restart: unless-stopped
+    tty: true
 
 volumes:
   pg_data:
