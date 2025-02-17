@@ -8,6 +8,8 @@ x-db-env: &common-db-env
 x-api-env: &common-api-env
   DATABASE_URL: postgres://${POSTGRES_USER}:${POSTGRES_PASSWORD}@db:5432/${POSTGRES_DB}
   GIN_MODE: release
+  HOST: true # true = 0.0.0.0 (recommended) // false = localhost
+
 
 services:
   db:

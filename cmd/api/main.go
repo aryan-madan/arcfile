@@ -80,7 +80,9 @@ func main() {
 	router.GET("/api/download/:identifier", handler.FileDownload)
 
 	var addr string
-	if mode == "release" {
+	host := os.Getenv("HOST")
+
+	if host == "true" {
 		addr = "0.0.0.0:8080"
 	} else {
 		addr = "localhost:8080"
