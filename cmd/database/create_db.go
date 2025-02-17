@@ -7,9 +7,7 @@ import (
 )
 
 func main() {
-	if err := godotenv.Load(); err != nil {
-		panic(err)
-	}
+	godotenv.Load()
 
 	if _, err := storage.InitDatabase(); err != nil {
 		panic(err)
