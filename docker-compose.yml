@@ -1,42 +1,37 @@
 version: '3.8'
 
-x-db-env: &common-db-env
-  POSTGRES_USER: myuser
-  POSTGRES_PASSWORD: mypassword
-  POSTGRES_DB: mydatabase
-
-x-api-env: &common-api-env
-  DATABASE_URL: postgres://${POSTGRES_USER}:${POSTGRES_PASSWORD}@db:5432/${POSTGRES_DB}
-  GIN_MODE: release
-  HOST: true # true = 0.0.0.0 (recommended) // false = localhost
-
-
 services:
   db:
-    image: postgres
+    image: postgres:17.3
     environment:
-      <<: *common-db-env
+      POSTGRES_USER: youruser
+      POSTGRES_PASSWORD: yourpassword
+      POSTGRES_DB: yourdb
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres || exit 1"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
     volumes:
       - pg_data:/var/lib/postgresql/data
     networks:
       - app-network
-    healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER}"]
-      interval: 5s
-      retries: 5
-      start_period: 10s
+    restart: unless-stopped
 
   api:
     build: .
     ports:
       - "8080:8080"
     environment:
-      <<: *common-api-env
+      DATABASE_URL: postgres://youruser:yourpassword@db:5432/yourdb
+      GIN_MODE: release
+      HOST: true
     depends_on:
       db:
         condition: service_healthy
     networks:
       - app-network
+    restart: unless-stopped
 
 volumes:
   pg_data:
