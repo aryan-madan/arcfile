@@ -67,16 +67,17 @@
    ```
 
 3. **Set up environment variables:**
-   ```env
+    Rename `.env.example` to `.env` and update the values:
+    ```env
     # Your PostgreSQL database connection string
-    DATABASE_URL=postgres://youruser:yourpassword@db:5432/yourdb
+    DATABASE_URL=postgres://youruser:yourpassword@localhost:5432/yourdb
 
     # Gin mode: log levels, basically
     GIN_MODE=release
 
     # Set to true to listen on all interfaces (0.0.0.0), or false for localhost only
     HOST=true 
-   ```
+    ```
 
 4. **Build and run the application:**
    ```sh
