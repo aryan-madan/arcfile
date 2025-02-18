@@ -1,5 +1,5 @@
 :root {
-  --primary-color: #8B5CF6;
+  --primary-color: hsl(258, 90%, 66%);
   --text-color: white;
   --text-color-secondary: rgba(255, 255, 255, 0.7);
   --text-color-tertiary: rgba(147, 147, 147, 0.7);
@@ -133,7 +133,7 @@ main {
   right: -1px;
   bottom: -1px;
   left: -1px;
-  background: linear-gradient(135deg, var(--primary-color) 0%, rgba(139, 92, 246, 0) 50%);
+  background: radial-gradient(ellipse at top left, var(--primary-color) 0%, rgba(139, 92, 246, 0) 70%);
   border-radius: 24px;
   z-index: -1;
   opacity: 0.5;
@@ -148,7 +148,7 @@ main {
 }
 
 .download-box::before {
-  background: linear-gradient(-135deg, var(--primary-color) 0%, rgba(139, 92, 246, 0) 50%);
+  background: radial-gradient(ellipse at top right, var(--primary-color) 0%, rgba(139, 92, 246, 0) 70%);
 }
 
 .gradient-border:hover::before {
