@@ -6,7 +6,6 @@ import (
 	"os"
 
 	"github.com/jackc/pgx/v5/pgxpool"
-	_ "modernc.org/sqlite"
 )
 
 func InitDatabase() (*pgxpool.Pool, error) {

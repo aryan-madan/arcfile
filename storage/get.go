@@ -8,7 +8,6 @@ import (
 	"strings"
 
 	"github.com/nxrmqlly/arcfile/structures"
-	_ "modernc.org/sqlite"
 )
 
 var ErrFileNotFound = errors.New("file not found")

@@ -7,7 +7,6 @@ import (
 	"time"
 
 	"github.com/nxrmqlly/arcfile/structures"
-	_ "modernc.org/sqlite"
 )
 
 const alphanumericChars = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ"
