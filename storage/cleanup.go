@@ -6,6 +6,7 @@ import (
 	"os"
 	"path"
 	"path/filepath"
+	"strings"
 	"time"
 
 	"github.com/nxrmqlly/arcfile/structures"
@@ -111,7 +112,7 @@ func (r *Repository) DeleteDatabaseEntry(ctx context.Context, identifier string)
 	_, err := r.pool.Exec(ctx, `
         DELETE FROM arcfile_files 
         WHERE identifier = $1`,
-		identifier)
+		strings.ToUpper(identifier))
 
 	return err
 }

@@ -5,6 +5,7 @@ import (
 	"database/sql"
 	"errors"
 	"fmt"
+	"strings"
 
 	"github.com/nxrmqlly/arcfile/structures"
 	_ "modernc.org/sqlite"
@@ -24,7 +25,7 @@ func (e *FileNotFoundError) Error() string {
 func (r *Repository) GetFile(ctx context.Context, identifier string) (structures.File, error) {
 	query := "SELECT * FROM arcfile_files WHERE identifier = $1"
 
-	row := r.pool.QueryRow(ctx, query, identifier)
+	row := r.pool.QueryRow(ctx, query, strings.ToUpper(identifier))
 
 	var file structures.File
 
