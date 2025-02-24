@@ -6,6 +6,7 @@ import (
 	"net/http"
 	"os"
 	"os/signal"
+	"strconv"
 	"syscall"
 	"time"
 
@@ -68,8 +69,11 @@ func main() {
 
 	router := gin.Default()
 
-	// Set a lower memory limit for multipart forms (default is 32 MiB)
-	router.MaxMultipartMemory = 10 << 20 // 10 MiB
+	// Set a memory limit for multipart forms (default is 32 MiB)
+	maxUploadSizeMiB, err := strconv.Atoi(os.Getenv("MAX_UPLOAD_SIZE"))
+	if err == nil { // conversion is successful
+		router.MaxMultipartMemory = int64(maxUploadSizeMiB) << 20
+	}
 
 	router.StaticFS("/public", http.FS(public.Templates))
 	router.StaticFileFS("/about", "about.html", http.FS(public.Templates))

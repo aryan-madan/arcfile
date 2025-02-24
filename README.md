@@ -4,7 +4,7 @@
 
 ![arcfile](./public/img/ui/desktop.png)
 <details>
-  <summary>📱 Mobile Screenshot</summary>
+    <summary>📱 Mobile Screenshot</summary>
 
 ![arcfile](./public/img/ui/mobile.png)
 </details>
@@ -23,68 +23,70 @@
 ##  Running Arcfile
 
 <details>
-  <summary>🐳 Using Docker</summary>
+    <summary>🐳 Using Docker</summary>
 
 1. **Clone the repository:**
-   ```sh
-   git clone https://github.com/nxrmqlly/arcfile.git
-   cd arcfile
-   ```
+```sh
+git clone https://github.com/nxrmqlly/arcfile.git
+cd arcfile
+```
 
 2. **Start the services:**
-   ```sh
-   docker-compose up -d --build
-   ```
-   This will build and start both the database and the API service.
+```sh
+docker-compose up -d --build
+```
+This will build and start both the database and the API service.
 
 
 3. **Stop the services:**
-   ```sh
-   docker-compose down
-   ```
-
+```sh
+docker-compose down
+```
 </details>
 
 <details>
-  <summary>💻 Running Manually</summary>
+    <summary>💻 Running Manually</summary>
 
 1. **Start PostgreSQL**
-   - Ensure PostgreSQL is running locally with the following credentials:
-     - **User:** `youruser`
-     - **Password:** `yourpassword`
-     - **Database:** `yourdb`
-     - **Port:** `5432`
+- Ensure PostgreSQL is running locally with the following credentials:
+    - **User:** `youruser`
+    - **Password:** `yourpassword`
+    - **Database:** `yourdb`
+    - **Port:** `5432`
 
-   If using `psql`, you can create the database manually:
-   ```sh
-   psql -U youruser -c "CREATE DATABASE yourdb;"
-   ```
+If using `psql`, you can create the database manually:
+```sh
+psql -U youruser -c "CREATE DATABASE yourdb;"
+```
 
 2. **Clone the repository:**
-   ```sh
-   git clone https://github.com/nxrmqlly/arcfile.git
-   cd arcfile
-   ```
+```sh
+git clone https://github.com/nxrmqlly/arcfile.git
+cd arcfile
+```
 
 3. **Set up environment variables:**
-    Rename `.env.example` to `.env` and update the values:
-    ```env
-    # Your PostgreSQL database connection string
-    DATABASE_URL=postgres://youruser:yourpassword@localhost:5432/yourdb
+Rename `.env.example` to `.env` and update the values:
+```env
+# Your PostgreSQL database connection string
+DATABASE_URL=postgres://youruser:yourpassword@localhost:5432/yourdb
 
-    # Gin mode: log levels, basically
-    GIN_MODE=release
+# Gin mode: log levels, basically
+GIN_MODE=release
 
-    # Set to true to listen on all interfaces (0.0.0.0), or false for localhost only
-    HOST=true 
-    ```
+# Set to true to listen on all interfaces (0.0.0.0), or false for localhost only
+HOST=true 
+
+# Maximum upload size in MiB (Mebibytes) (default is 32 MiB)
+MAX_UPLOAD_SIZE=32
+```
 
 4. **Build and run the application:**
-   ```sh
-   go mod download
-   go build -o main ./cmd/api/main.go
-   ./main
-   ```
+```sh
+go mod download
+go build -o main ./cmd/api/main.go
+./main
+```
 
 </details>
 
@@ -95,7 +97,7 @@ After running the service, the API should be accessible at:
 - **API Routes** `/api`
 
 
-Acknowledgments
+## Acknowledgments
 
 - Thanks to [Aryan Madan](https://github.com/aryan-madan) ([web](https://aryanmadan.vercel.app)) for help with frontend 
 

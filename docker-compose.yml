@@ -27,6 +27,7 @@ services:
       DATABASE_URL: postgres://youruser:yourpassword@db:5432/yourdb
       GIN_MODE: release
       HOST: true
+      MAX_UPLOAD_SIZE: 32
     depends_on:
       db:
         condition: service_healthy
